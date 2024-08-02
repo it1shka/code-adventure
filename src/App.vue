@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import Editor from '@/editor/Editor.vue'
 import { ref } from 'vue'
-import {clamp} from './lib';
+import { clamp } from '@/lib'
 
 const layout = ref<HTMLDivElement | null>(null)
 const layoutCenter = ref(0.5)
@@ -25,7 +26,7 @@ const handleDrag = (event: MouseEvent) => {
       class="editor-container"
       :style="{ flex: layoutCenter }"
     >
-
+      <Editor />
     </aside>
     <div class="drag-handle">
       <div @mousedown="isDragging = true" />
@@ -39,21 +40,20 @@ const handleDrag = (event: MouseEvent) => {
   </main>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
   main {
     height: 100vh;
     width: 100vw;
     display: flex;
-    background-color: white;
   }
 
   aside { 
     flex: 1; 
-    background-color: #ddd;
+    background-color: #eee;
   }
 
   .editor-container {
-    border-right: 1px solid #bbb;
+    border-right: 1px solid #ddd;
   }
 
   .drag-handle {

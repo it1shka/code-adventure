@@ -11,7 +11,11 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "vue": "^3.4.29"
+    "@replit/codemirror-vim": "^6.2.1",
+    "codemirror": "^6.0.1",
+    "pinia": "^2.2.0",
+    "vue": "^3.4.29",
+    "vue-codemirror": "^6.1.1"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
