@@ -13,9 +13,9 @@ const InstructionsLanguage = LRLanguage.define({
   parser: parser.configure({
     props: [
       styleTags({
-        number: tags.number,
-        direction: tags.keyword,
-        comment: tags.comment,
+        Number: tags.number,
+        Direction: tags.atom,
+        Comment: tags.comment,
         [Keywords.join(' ')]: tags.keyword,
       }),
       indentNodeProp.add({

@@ -1,23 +1,23 @@
-@top Program { Statement* }
+@top Program { statement* }
 
-Statement { Move | Turn | Repeat }
+statement { Move | Turn | Repeat }
 
-Move { "move" number "steps" }
+Move { "move" Number "steps" }
 
-Turn { "turn" direction }
+Turn { "turn" Direction }
 
-Repeat { "repeat" number "times" Statement* "end" }
+Repeat { "repeat" Number "times" statement* "end" }
 
 @tokens {
-  number { @digit+ }
-  direction { "left" | "right" }
-  comment { "#" ![\n]* }
+  Number { @digit+ }
+  Direction { "left" | "right" }
+  Comment { "#" ![\n]* }
   space { @whitespace+ }
   "move" "steps"
   "turn"
   "repeat" "times" "end"
 }
 
-@skip { space | comment }
+@skip { space | Comment }
 
 @detectDelim
