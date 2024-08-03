@@ -1,7 +1,8 @@
 import { styleTags, tags } from '@lezer/highlight'
 import { parser } from './parser.grammar'
-import { LRLanguage, LanguageSupport, foldInside, foldNodeProp, indentNodeProp } from '@codemirror/language'
+import { LRLanguage, LanguageSupport, foldInside, foldNodeProp, indentNodeProp, syntaxTree } from '@codemirror/language'
 import { completeFromList, snippetCompletion } from '@codemirror/autocomplete'
+import { linter } from '@codemirror/lint'
 
 const Keywords = Object.freeze([
   'move', 'steps',
@@ -39,6 +40,24 @@ const InstructionsLanguage = LRLanguage.define({
   }
 })
 
+const simpleLinter = () => {
+  return linter(view => {
+    const errors = []
+    syntaxTree(view.state).iterate({ enter: node => {
+      if (!node.type.isError) return
+      const line = view.state.doc.lineAt(node.to)
+      const error = Object.freeze({
+        from: node.from,
+        to: node.to,
+        severity: 'error',
+        message: `Syntax error on line ${line.number}`,
+      })
+      errors.push(error)
+    }})
+    return errors
+  })
+}
+
 const codeCompletion = InstructionsLanguage.data.of({
   autocomplete: completeFromList(Keywords.map(keyword => {
     return Object.freeze({ label: keyword, type: 'keyword' })
@@ -54,7 +73,7 @@ const snippets = InstructionsLanguage.data.of({
 const InstructionsLanguageSupport = () => {
   return new LanguageSupport(
     InstructionsLanguage,
-    [codeCompletion, snippets],
+    [codeCompletion, snippets, simpleLinter()],
   )
 }
 
