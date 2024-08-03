@@ -11,9 +11,14 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.17.0",
+    "@codemirror/language": "^6.10.2",
+    "@lezer/highlight": "^1.2.0",
+    "@lezer/lr": "^1.4.2",
     "@replit/codemirror-vim": "^6.2.1",
     "codemirror": "^6.0.1",
     "pinia": "^2.2.0",
+    "unplugin-lezer": "^1.0.1",
     "vue": "^3.4.29",
     "vue-codemirror": "^6.1.1"
   },

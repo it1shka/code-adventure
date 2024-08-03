@@ -1,0 +1,21 @@
+@top Program { statement* }
+
+@skip { space | LineComment }
+
+statement { move | turn | repeat }
+
+move { "move" Number "steps" }
+
+turn { "turn" Direction }
+
+repeat { "repeat" Number "times" statement* "end" }
+
+@tokens {
+  Number { @digit+ }
+  Direction { "left" | "right" }
+  LineComment { "#" ![\n]* }
+  space { @whitespace+ }
+  "move" "steps"
+  "turn"
+  "repeat" "times" "end"
+}

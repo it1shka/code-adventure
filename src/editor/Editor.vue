@@ -5,6 +5,8 @@ import { storeToRefs } from 'pinia'
 import { computed } from 'vue';
 import { vim } from '@replit/codemirror-vim'
 import EditorControls from './EditorControls.vue'
+import InstructionsLanguageSupport from '@/language/editorSupport';
+import {basicSetup} from 'codemirror';
 
 const editorStore = useEditorStore()
 const { 
@@ -19,14 +21,11 @@ const codemirrorStyling = computed(() => Object.freeze({
 }))
 
 const codemirrorExtensions = computed(() => {
-  const extensions = []
-  if (vimMode.value) {
-    const vimExtension = vim({ 
-      status: true,
-    })
-    extensions.push(vimExtension)
-  }
-  return Object.freeze(extensions)
+  return Object.freeze([
+    basicSetup,
+    InstructionsLanguageSupport(),
+    ...(vimMode.value ? [vim({ status: true })] : []),
+  ])
 })
 
 </script>
