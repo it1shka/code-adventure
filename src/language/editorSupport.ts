@@ -1,13 +1,19 @@
 import { styleTags, tags } from '@lezer/highlight'
 import { parser } from './parser.grammar'
 import { LRLanguage, LanguageSupport, foldInside, foldNodeProp, indentNodeProp } from '@codemirror/language'
-import { completeFromList } from '@codemirror/autocomplete'
+import { completeFromList, snippetCompletion } from '@codemirror/autocomplete'
 
 const Keywords = Object.freeze([
   'move', 'steps',
   'turn', 'left', 'right',
   'repeat', 'times', 'end'
 ])
+
+const Snippets = Object.freeze({
+  move: 'move ${n} steps',
+  turn: 'turn ${direction}',
+  repeat: 'repeat ${n} times\n\t${instructions}\nend'
+})
 
 const InstructionsLanguage = LRLanguage.define({
   parser: parser.configure({
@@ -39,10 +45,16 @@ const codeCompletion = InstructionsLanguage.data.of({
   }))
 })
 
+const snippets = InstructionsLanguage.data.of({
+  autocomplete: Object.entries(Snippets).map(([name, snippet]) => {
+    return snippetCompletion(snippet, { label: name })
+  })
+})
+
 const InstructionsLanguageSupport = () => {
   return new LanguageSupport(
     InstructionsLanguage,
-    [codeCompletion],
+    [codeCompletion, snippets],
   )
 }
 
