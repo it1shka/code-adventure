@@ -1,25 +1,39 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { VueComponent as Documentation } from './docs.md'
 
-const Tabs = Object.freeze([ 'Code', 'Docs', 'Levels' ])
+const enum Tab {
+  code = 'Code',
+  docs = 'Docs',
+  levels = 'Levels',
+}
 
-const currentTab = ref<string>('Code')
+const tabs = Object.freeze([
+  Tab.code,
+  Tab.docs,
+  Tab.levels
+])
+
+const currentTab = ref(Tab.code)
 </script>
 
 <template>
   <div class="console-container">
     <nav class="console-tabs">
       <div 
-        v-for="tab in Tabs" 
+        v-for="tab in tabs" 
         :key="tab" 
         v-text="tab"
         @click="currentTab = tab"
         :class="{ tab: true, chosen: tab === currentTab }"
       />
     </nav>
-    <aside class="console-content">
-
-    </aside>
+    <aside class="console-content"><div>
+      <div 
+        v-if="currentTab === Tab.docs"
+        class="styled-markdown"
+      ><Documentation/></div>
+    </div></aside>
   </div>
 </template>
 
@@ -27,14 +41,20 @@ const currentTab = ref<string>('Code')
   $light-color: #e3f2fd;
   $dark-color: #42a5f5;
 
+  .styled-markdown {
+    padding: 2em 1.5em;
+    & > * + * {
+      margin-top: 0.5em;
+    }
+  }
+
   .console-container {
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-columns: 100px 1fr;
+    display: flex;
 
     .console-tabs {
-      grid-column: 1 / 2;
+      width: 100px;
       border-right: 1px solid #ddd;
       display: flex;
       flex-direction: column;
@@ -58,7 +78,16 @@ const currentTab = ref<string>('Code')
     }
 
     .console-content {
-      grid-column: 2 / 3;
+      height: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      & > * {
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0px;
+      }
     }
   }
 </style>
