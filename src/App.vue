@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Editor from '@/editor/Editor.vue'
+import RightPane from './RightPane.vue'
 import { ref } from 'vue'
 import { clamp } from '@/lib'
 
@@ -19,7 +20,7 @@ const handleDrag = (event: MouseEvent) => {
 <template>
   <main 
     ref="layout"
-    @mousemove.stop.prevent="handleDrag"
+    @mousemove="handleDrag"
     @mouseup="isDragging = false"
   >
     <aside 
@@ -28,14 +29,14 @@ const handleDrag = (event: MouseEvent) => {
     >
       <Editor />
     </aside>
-    <div class="drag-handle">
+    <div class="vertical-drag-handle">
       <div @mousedown="isDragging = true" />
     </div>
     <aside 
       class="display-container"
       :style="{ flex: 1 - layoutCenter }"
     >
-
+      <RightPane />
     </aside>
   </main>
 </template>
@@ -56,7 +57,7 @@ const handleDrag = (event: MouseEvent) => {
     border-right: 1px solid #ddd;
   }
 
-  .drag-handle {
+  .vertical-drag-handle {
     flex: 0;
     position: relative;
     & > div {
