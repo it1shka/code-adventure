@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Editor from '@/editor/Editor.vue'
-import RightPane from './RightPane.vue'
+import RightPane from '@/RightPane.vue'
 import { ref } from 'vue'
 import { clamp } from '@/lib'
 

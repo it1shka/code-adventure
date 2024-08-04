@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import { clamp } from './lib'
+import { clamp } from '@/lib'
+import EditorConsole from '@/console/EditorConsole.vue'
 
 const layout = ref<HTMLDivElement | null>(null)
 const layoutCenter = ref(0.7)
@@ -50,7 +51,7 @@ onUnmounted(() => {
       class="bottom-part"
       :style="{ flex: 1 - layoutCenter }"
     >
-
+      <EditorConsole />
     </div>
   </div>
 </template>
