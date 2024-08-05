@@ -44,7 +44,10 @@ const compileCode = () => {
 <template>
   <div class="code-controls">
     <template v-if="running">
-      <button class="stop-button">Stop</button>
+      <button 
+        class="stop-button"
+        @click="stop"
+      >Stop</button>
     </template>
     <template v-else>
       <button 
@@ -55,11 +58,16 @@ const compileCode = () => {
         <button
           v-if="pointer > 0"
           class="prev-button"
+          @click="pointerPrev"
         >Prev</button>
-        <button class="run-button">Run</button>
+        <button 
+          class="run-button"
+          @click="run"
+        >Run</button>
         <button 
           v-if="pointer < instructions.length"
           class="next-button"
+          @click="pointerNext"
         >Next</button>
       </template>
     </template>
