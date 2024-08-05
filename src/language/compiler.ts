@@ -1,5 +1,6 @@
 import type {SyntaxNode} from '@lezer/common'
 import { parser } from './parser.grammar'
+import { repeat, repeatArray } from '@/lib'
 
 export const enum Command {
   move = 'move',
@@ -35,7 +36,7 @@ export const compile = (sourceCode: string) => {
     throw new Error('Failed to parse program')
   }
   do {
-    const compiledNode = compileNode(cursor.node)
+    const compiledNode = compileNode(sourceCode, cursor.node)
     instructions.push(...compiledNode)
   } while (cursor.nextSibling())
   return instructions
@@ -48,17 +49,60 @@ const enum NodeType {
 }
 
 /**
- * If encounters unknown node type, throws an error
  * @throws {Error}
  */
-const compileNode = (node: SyntaxNode): Command[] => {
+const compileNode = (source: string, node: SyntaxNode): Command[] => {
   const nodeType = node.type.name
   switch (nodeType) {
-    case NodeType.move:
+    case NodeType.move: {
+      const n = node.getChild('Number')
+      if (n === null) {
+        throw new Error('In move instruction: expected the number of steps')
+      }
+      const stepsAmount = Number(source.slice(n.from, n.to))
+      if (Number.isNaN(stepsAmount)) {
+        throw new Error('In move instruction: steps is not a number')
+      }
+      return repeat(Command.move, stepsAmount)
+    }
 
-    case NodeType.turn:
+    case NodeType.turn: {
+      const direction = node.getChild('Direction')
+      if (direction === null) {
+        throw new Error('In turn instruction: expected direction')
+      }
+      const span = source.slice(direction.from, direction.to)
+      switch (span) {
+        case 'left':
+          return [Command.turnLeft]
+        case 'right':
+          return [Command.turnRight]
+        default:
+          throw new Error('In turn instruction: unknown direction')
+      }
+    }
 
-    case NodeType.repeat:
+    case NodeType.repeat: {
+      const n = node.getChild('Number')
+      if (n === null) {
+        throw new Error('In repeat instruction: expected the number of repetitions')
+      }
+      const times = Number(source.slice(n.from, n.to))
+      if (Number.isNaN(times)) {
+        throw new Error('In repeat instruction: repetitions is not a number')
+      }
+      const statementStart = node.getChild('times')
+      if (statementStart === null) {
+        throw new Error('In repeat instruction: expected "times" keyword')
+      }
+      let cursor = statementStart.cursor()
+      const commands = []
+      while (cursor.nextSibling()) {
+        if (cursor.node.type.name === 'end') break
+        commands.push(...compileNode(source, cursor.node))
+      }
+      return repeatArray(commands, times)
+    }
 
     default:
       throw new Error(`Unknown node type: ${nodeType}`)

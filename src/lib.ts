@@ -5,6 +5,22 @@ export const clamp = (min: number, max: number, value: number) => {
   return output
 }
 
+export const repeat = <T>(item: T, times: number) => {
+  const output = new Array(times)
+  for (let i = 0; i < times; i++) {
+    output[i] = item
+  }
+  return output
+}
+
+export const repeatArray = <T>(array: T[], times: number) => {
+  const output = []
+  for (let i = 0; i < times; i++) {
+    output.push(...array)
+  }
+  return output
+}
+
 export const errorMessage = (error: unknown) => {
   if (error instanceof Error) {
     return error.message

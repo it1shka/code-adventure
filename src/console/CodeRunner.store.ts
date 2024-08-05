@@ -11,8 +11,9 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
   const running = ref(false)
 
   const setInstructions = (newInstructions: Command[]) => {
-    running.value = false
+    errors.value = []
     pointer.value = 0
+    running.value = false
     instructions.value = newInstructions
   }
 
@@ -26,7 +27,7 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
       pointer.value + 1,
       instructions.value.length,
     )
-    if (pointer.value >= instructions.value.length - 1) {
+    if (pointer.value >= instructions.value.length) {
       running.value = false
     }
   }
@@ -39,6 +40,7 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
   }
 
   const run = () => {
+    pointer.value = 0
     running.value = true
   }
 

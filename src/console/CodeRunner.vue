@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useCodeRunnerStore } from './CodeRunner.store'
-import { checkErrors, Command, compile } from '@/language/compiler'
+import { checkErrors, compile } from '@/language/compiler'
 import { useEditorStore } from '@/editor/Editor.store'
-import {errorMessage} from '@/lib';
+import { errorMessage } from '@/lib'
 
 const codeRunnerStore = useCodeRunnerStore()
 const {
@@ -31,6 +31,7 @@ const compileCode = () => {
       return
     }
     const instructions = compile(sourceCode.value)
+    console.dir(instructions)
     setInstructions(instructions)
   } catch (error) {
     const message = errorMessage(error)
@@ -55,10 +56,11 @@ const compileCode = () => {
           v-if="pointer > 0"
           class="prev-button"
         >Prev</button>
-        <template v-if="pointer < instructions.length - 1">
-          <button class="run-button">Run</button>
-          <button class="next-button">Next</button>
-        </template>
+        <button class="run-button">Run</button>
+        <button 
+          v-if="pointer < instructions.length"
+          class="next-button"
+        >Next</button>
       </template>
     </template>
   </div>
