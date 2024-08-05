@@ -72,9 +72,48 @@ const compileCode = () => {
       </template>
     </template>
   </div>
+
+  <div
+    v-if="errors.length > 0"
+    class="code-errors"
+  >
+  <h3 style="margin-bottom: 0.5em">Compiled with {{ errors.length }} errors: </h3>
+    <p
+      class="error-description"
+      v-for="(error, idx) in errors"
+      v-text="error"
+      :key="idx"
+    />
+    <div style="margin-top: 0.5em">
+      Fix them using instructions in your editor
+      and then try to re-compile your code
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
+  .code-errors {
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: grey;
+    p.error-description {
+      cursor: pointer;
+      padding: 0.25em 0.5em;
+      color: white;
+      background-color: #e57373;
+      border: 3px solid #d32f2f;
+      transition: 0.2s scale ease-in-out;
+      &:hover {
+        scale: 1.05;
+      }
+    }
+    & > * + * {
+      margin-top: 0.5em;
+    }
+  }
+
   .code-controls {
     & > * + * {
       margin-left: 0.5em;
