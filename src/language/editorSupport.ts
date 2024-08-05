@@ -2,7 +2,7 @@ import { styleTags, tags } from '@lezer/highlight'
 import { parser } from './parser.grammar'
 import { LRLanguage, LanguageSupport, foldInside, foldNodeProp, indentNodeProp, syntaxTree } from '@codemirror/language'
 import { completeFromList, snippetCompletion } from '@codemirror/autocomplete'
-import { linter } from '@codemirror/lint'
+import { linter, type Diagnostic } from '@codemirror/lint'
 
 const Keywords = Object.freeze([
   'move', 'steps',
@@ -42,7 +42,7 @@ const InstructionsLanguage = LRLanguage.define({
 
 const simpleLinter = () => {
   return linter(view => {
-    const errors = []
+    const errors: Diagnostic[] = []
     syntaxTree(view.state).iterate({ enter: node => {
       if (!node.type.isError) return
       const line = view.state.doc.lineAt(node.to)

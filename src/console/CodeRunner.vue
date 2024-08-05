@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import {storeToRefs} from 'pinia';
+import { storeToRefs } from 'pinia'
 import { useCodeRunnerStore } from './CodeRunner.store'
-import {Command} from '@/language/compiler';
+import { checkErrors, Command, compile } from '@/language/compiler'
+import { useEditorStore } from '@/editor/Editor.store'
+import {errorMessage} from '@/lib';
 
-const store = useCodeRunnerStore()
+const codeRunnerStore = useCodeRunnerStore()
 const {
   instructions,
   errors,
   pointer,
   running,
-} = storeToRefs(store)
+} = storeToRefs(codeRunnerStore)
 const {
   setInstructions,
   setErrors,
@@ -17,9 +19,25 @@ const {
   pointerPrev,
   run,
   stop,
-} = store
+} = codeRunnerStore
 
-setInstructions([Command.move])
+const editorStore = useEditorStore()
+const { sourceCode } = storeToRefs(editorStore)
+const compileCode = () => {
+  try {
+    const errors = checkErrors(sourceCode.value)
+    if (errors.length > 0) {
+      setErrors(errors)
+      return
+    }
+    const instructions = compile(sourceCode.value)
+    setInstructions(instructions)
+  } catch (error) {
+    const message = errorMessage(error)
+    setErrors([message])
+  }
+}
+
 </script>
 
 <template>
@@ -28,7 +46,10 @@ setInstructions([Command.move])
       <button class="stop-button">Stop</button>
     </template>
     <template v-else>
-      <button class="compile-button">Compile</button>
+      <button 
+        class="compile-button"
+        @click="compileCode"
+      >Compile</button>
       <template v-if="instructions.length > 0 && errors.length <= 0">
         <button
           v-if="pointer > 0"
