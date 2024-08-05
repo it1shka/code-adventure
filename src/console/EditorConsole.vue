@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { VueComponent as Documentation } from './docs.md'
+import CodeRunner from './CodeRunner.vue'
 
 const enum Tab {
   code = 'Code',
@@ -33,18 +34,26 @@ const currentTab = ref(Tab.code)
         v-if="currentTab === Tab.docs"
         class="styled-markdown"
       ><Documentation/></div>
+      <CodeRunner 
+        v-else-if="currentTab === Tab.code"
+      />
     </div></aside>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
   $light-color: #e3f2fd;
   $dark-color: #42a5f5;
 
   .styled-markdown {
     padding: 2em 1.5em;
+
     & > * + * {
       margin-top: 0.5em;
+    }
+
+    ol, ul {
+      padding: 0 1.2em;
     }
   }
 
