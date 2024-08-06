@@ -33,7 +33,7 @@ export const compile = (sourceCode: string) => {
   const instructions = []
   let cursor = ast.cursor()
   if (!cursor.firstChild()) {
-    throw new Error('Failed to parse program')
+    return []
   }
   do {
     const compiledNode = compileNode(sourceCode, cursor.node)

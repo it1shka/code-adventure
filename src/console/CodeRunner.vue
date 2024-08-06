@@ -18,6 +18,7 @@ const {
   pointerNext,
   pointerPrev,
   run,
+  resume,
   stop,
 } = codeRunnerStore
 
@@ -31,7 +32,6 @@ const compileCode = () => {
       return
     }
     const instructions = compile(sourceCode.value)
-    console.dir(instructions)
     setInstructions(instructions)
   } catch (error) {
     const message = errorMessage(error)
@@ -42,71 +42,130 @@ const compileCode = () => {
 </script>
 
 <template>
-  <div class="code-controls">
-    <template v-if="running">
-      <button 
-        class="stop-button"
-        @click="stop"
-      >Stop</button>
-    </template>
-    <template v-else>
-      <button 
-        class="compile-button"
-        @click="compileCode"
-      >Compile</button>
-      <template v-if="instructions.length > 0 && errors.length <= 0">
-        <button
-          v-if="pointer > 0"
-          class="prev-button"
-          @click="pointerPrev"
-        >Prev</button>
-        <button 
-          class="run-button"
-          @click="run"
-        >Run</button>
-        <button 
-          v-if="pointer < instructions.length"
-          class="next-button"
-          @click="pointerNext"
-        >Next</button>
-      </template>
-    </template>
-  </div>
+  <div class="console-container">
 
-  <div
-    v-if="errors.length > 0"
-    class="code-errors"
-  >
-  <h3 style="margin-bottom: 0.5em">Compiled with {{ errors.length }} errors: </h3>
-    <p
-      class="error-description"
-      v-for="(error, idx) in errors"
-      v-text="error"
-      :key="idx"
-    />
-    <div style="margin-top: 0.5em">
-      Fix them using instructions in your editor
-      and then try to re-compile your code
+    <div class="code-controls">
+      <template v-if="running">
+        <button 
+          class="stop-button"
+          @click="stop"
+        >Stop</button>
+      </template>
+      <template v-else>
+        <button 
+          class="compile-button"
+          @click="compileCode"
+        >Compile</button>
+        <template v-if="instructions.length > 0 && errors.length <= 0">
+          <button
+            v-if="pointer > 0"
+            class="prev-button"
+            @click="pointerPrev"
+          >Prev</button>
+          <button 
+            class="run-button"
+            @click="run"
+          >Run</button>
+          <button 
+            class="resume-button"
+            @click="resume"
+            v-if="pointer > 0 && pointer < instructions.length"
+          >Resume</button>
+          <button 
+            v-if="pointer < instructions.length"
+            class="next-button"
+            @click="pointerNext"
+          >Next</button>
+        </template>
+      </template>
     </div>
+
+    <div
+      v-if="errors.length > 0"
+      class="code-errors"
+    >
+      <h3>Compiled with {{ errors.length }} errors: </h3>
+      <div class="errors-list">
+        <p
+          class="error-description"
+          v-for="(error, idx) in errors"
+          v-text="error"
+          :key="idx"
+        />
+      </div>
+      <div>
+        Fix them using instructions in your editor
+        and then try to re-compile your code
+      </div>
+    </div>
+
+    <div
+      v-else-if="instructions.length > 0"
+      class="code-instructions"
+    >
+      <p
+        v-for="(instr, idx) in instructions"
+        :class="{ 'code-instruction': true, running: idx === pointer }"
+        v-text="instr"
+      />
+    </div>
+
   </div>
 </template>
 
 <style scoped lang="scss">
+  .console-container {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .code-instructions {
+    overflow-y: scroll;
+    padding: 0 0.5em;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    .code-instruction {
+      cursor: pointer;
+      padding: 0.2em 0.5em;
+      margin: 0.1em;
+      color: grey;
+      background-color: #e3f2fd;
+      border: 3px solid #42a5f5;
+      transition: 0.2s all ease;
+      transition-property: background-color, color;
+      &.running {
+        background-color: #90caf9;
+        color: black;
+      }
+    }
+  }
+
   .code-errors {
+    flex: 1;
+    overflow-y: scroll;
     padding: 1em;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     color: grey;
-    p.error-description {
-      cursor: pointer;
-      padding: 0.25em 0.5em;
-      color: white;
-      background-color: #e57373;
-      border: 3px solid #d32f2f;
-      transition: 0.2s scale ease-in-out;
-      &:hover {
-        scale: 1.05;
+    .errors-list {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      p.error-description {
+        cursor: pointer;
+        padding: 0.25em 0.5em;
+        margin: 0.25em;
+        color: white;
+        background-color: #e57373;
+        border: 3px solid #d32f2f;
+        transition: 0.2s scale ease-in-out;
+        &:hover {
+          scale: 1.05;
+        }
       }
     }
     & > * + * {
@@ -126,6 +185,7 @@ const compileCode = () => {
     padding: 0.5em;
 
     @mixin juicy-button($bg-color, $shadow-color) {
+      min-width: 100px;
       border: none;
       background-color: transparent;
       padding: 0.5em 0.75em;
@@ -152,7 +212,7 @@ const compileCode = () => {
       @include juicy-button(#ce93d8, #f3e5f5); 
     }
 
-    .run-button { 
+    .run-button, .resume-button { 
       @include juicy-button(#ffa726, #ffb74d); 
     }
   }

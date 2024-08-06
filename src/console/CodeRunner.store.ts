@@ -44,6 +44,10 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
     running.value = true
   }
 
+  const resume = () => {
+    running.value = true
+  }
+
   const stop = () => {
     running.value = false
   }
@@ -70,6 +74,7 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
     pointerNext,
     pointerPrev,
     run,
+    resume,
     stop,
   }
 })
