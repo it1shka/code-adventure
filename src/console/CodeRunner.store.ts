@@ -52,6 +52,11 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
     running.value = false
   }
 
+  const reset = () => {
+    running.value = false
+    pointer.value = 0
+  }
+
   const interval = ref<ReturnType<typeof setInterval>>()
   watch(running, () => {
     if (!running.value) {
@@ -76,5 +81,6 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
     run,
     resume,
     stop,
+    reset,
   }
 })

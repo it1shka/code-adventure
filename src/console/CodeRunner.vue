@@ -20,6 +20,7 @@ const {
   run,
   resume,
   stop,
+  reset,
 } = codeRunnerStore
 
 const editorStore = useEditorStore()
@@ -57,6 +58,11 @@ const compileCode = () => {
           @click="compileCode"
         >Compile</button>
         <template v-if="instructions.length > 0 && errors.length <= 0">
+          <button 
+            v-if="pointer < instructions.length"
+            class="next-button"
+            @click="pointerNext"
+          >Next</button>
           <button
             v-if="pointer > 0"
             class="prev-button"
@@ -65,19 +71,19 @@ const compileCode = () => {
           <button 
             class="run-button"
             @click="run"
-          >Run</button>
+            v-text="pointer > 0 ? 'Restart' : 'Start'"
+          />
           <button 
             class="resume-button"
             @click="resume"
             v-if="pointer > 0 && pointer < instructions.length"
           >Resume</button>
-          <button 
-            v-if="pointer < instructions.length"
-            class="next-button"
-            @click="pointerNext"
-          >Next</button>
         </template>
       </template>
+      <button 
+        class="reset-button"
+        @click="reset"
+      >Reset</button>
     </div>
 
     <div
@@ -110,10 +116,19 @@ const compileCode = () => {
       />
     </div>
 
+    <div class="no-instructions" v-else>
+      No instructions. Try writing a program and compiling it!
+    </div>
+
   </div>
 </template>
 
 <style scoped lang="scss">
+  .no-instructions {
+    color: grey;
+    padding: 0.5em 0.75em;
+  }
+
   .console-container {
     width: 100%; height: 100%;
     display: flex;
@@ -185,7 +200,7 @@ const compileCode = () => {
     padding: 0.5em;
 
     @mixin juicy-button($bg-color, $shadow-color) {
-      min-width: 100px;
+      min-width: 60px;
       border: none;
       background-color: transparent;
       padding: 0.5em 0.75em;
@@ -204,7 +219,7 @@ const compileCode = () => {
       @include juicy-button(#29b6f6, #4fc3f7);
     }
 
-    .stop-button { 
+    .stop-button, .reset-button { 
       @include juicy-button(#f44336, #e57373); 
     }
 
