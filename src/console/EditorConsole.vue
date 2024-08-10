@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { VueComponent as Documentation } from './docs.md'
 import CodeRunner from './CodeRunner.vue'
+import LevelPicker from './LevelPicker.vue'
 
 const enum Tab {
   code = 'Code',
@@ -36,6 +37,9 @@ const currentTab = ref(Tab.code)
       ><Documentation/></div>
       <CodeRunner 
         v-else-if="currentTab === Tab.code"
+      />
+      <LevelPicker
+        v-else-if="currentTab === Tab.levels"
       />
     </div></aside>
   </div>

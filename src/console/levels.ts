@@ -1,3 +1,5 @@
+import levelsRaw from './levels.txt?raw'
+
 type Position = {
   row: number
   column: number
@@ -115,22 +117,10 @@ const level = (raw: string): LevelSnapshot => {
   })
 }
 
-
-const Levels = Object.freeze([
-  level(`
-    Starter
-    *********
-    *V      *
-    *       *
-    *       *
-    *  O    *
-    *       *
-    *       *
-    *     X *
-    *       *
-    *********
-  `),
-
-])
+const Levels = levelsRaw
+  .split('%%')
+  .map(e => e.trim())
+  .filter(Boolean)
+  .map(level)
 
 export default Levels
