@@ -20,9 +20,15 @@ const { setCurrent } = levelPickerStore
       }"
       v-for="level in levelNames"
       :key="level"
-      v-text="level"
       @click="setCurrent(level)"
-    />
+    >
+      <p>{{ level }}</p>
+      <img 
+        v-if="completed.includes(level)"
+        alt="Completed"
+        src="/check.png"
+      />
+    </button>
   </div>
 </template>
 
@@ -41,7 +47,9 @@ const { setCurrent } = levelPickerStore
     box-shadow: $color 0px 1.5px 6px 0px, $color 0px 0px 0px 1px;
   }
 
-  button.level {
+  .level {
+    position: relative;
+    user-select: none;
     font-size: 1.05em;
     margin: 0.5em;
     border: none;
@@ -63,6 +71,14 @@ const { setCurrent } = levelPickerStore
 
     &.chosen {
       @include juicy($chosen-shadow);
+    }
+
+    img {
+      position: absolute;
+      width: 15px;
+      height: auto;
+      top: 0; right: 0;
+      transform: translate(40%, -40%);
     }
   }
 }
