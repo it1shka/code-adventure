@@ -2,7 +2,7 @@
 import Levels, { Direction, nextLevel } from '@/console/levels'
 import useLevelPickerStore from '@/console/LevelPicker.store'
 import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import FieldGrid from './FieldGrid.vue'
 import { useCodeRunnerStore } from '@/console/CodeRunner.store'
 
@@ -41,6 +41,13 @@ const robotRotation = computed(() => {
     case Direction.right: return 90
     case Direction.down: return 180
     default: return 270
+  }
+})
+
+const { markAsCompleted } = levelPickerStore
+watch(snapshot, () => {
+  if (snapshot.value.completed && pointer.value >= snapshots.value.length - 1) {
+    markAsCompleted(levelName.value)
   }
 })
 </script>
