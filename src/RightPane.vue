@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { clamp } from '@/lib'
 import EditorConsole from '@/console/EditorConsole.vue'
+import RobotDisplay from './robot/RobotDisplay.vue'
 
 const layout = ref<HTMLDivElement | null>(null)
 const layoutCenter = ref(0.7)
@@ -42,7 +43,7 @@ onUnmounted(() => {
       class="top-part"
       :style="{ flex: layoutCenter }"
     >
-      
+      <RobotDisplay />
     </div>
     <div class="horizontal-drag-handle">
       <div @mousedown="handleDragStart"/>

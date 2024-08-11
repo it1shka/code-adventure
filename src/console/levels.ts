@@ -1,6 +1,6 @@
 import levelsRaw from './levels.txt?raw'
 
-type Position = {
+export type Position = {
   row: number
   column: number
 }
@@ -29,7 +29,7 @@ type Box = {
   position: Position
 }
 
-type LevelSnapshot = Readonly<{
+export type LevelSnapshot = Readonly<{
   name: string
   rows: number
   columns: number
