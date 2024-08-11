@@ -30,3 +30,12 @@ export const errorMessage = (error: unknown) => {
   }
   return JSON.stringify(error)
 }
+
+export const all = <T>(array: T[], check: (elem: T) => boolean) => {
+  for (const elem of array) {
+    if (!check(elem)) {
+      return false
+    }
+  }
+  return true
+}
