@@ -114,13 +114,16 @@ export const nextLevel = (
   const nextRobotPosition = nextPosition(current.robot.position, direction)
   const nextBoxes = JSON.parse(JSON.stringify(current.boxes)) as Array<Mutable<Box>>
   let possibleCollision = nextRobotPosition
+  const alreadyMoved = new Set<Box['id']>()
   for (let i = 0; i < nextBoxes.length; i++) {
-    const boxToMove = nextBoxes.find(({ position }) => {
+    const boxToMove = nextBoxes.find(({ id, position }) => {
       return possibleCollision.row === position.row &&
-        possibleCollision.column === position.column
+        possibleCollision.column === position.column && 
+        !alreadyMoved.has(id)
     })
     if (boxToMove === undefined) break
     boxToMove.position = nextPosition(possibleCollision, direction)
+    alreadyMoved.add(boxToMove.id)
     possibleCollision = boxToMove.position
   }
 

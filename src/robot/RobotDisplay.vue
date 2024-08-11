@@ -70,15 +70,35 @@ const robotRotation = computed(() => {
           transform: `rotate(${robotRotation}deg)`,
         }"
       />
+      <div
+        class="box"
+        v-for="box in snapshot.boxes"
+        :key="box.id"
+        :style="{
+          width: `${CELL_SIZE}px`,
+          height: `${CELL_SIZE}px`,
+          position: 'absolute',
+          top: `${CELL_SIZE * box.position.row}px`,
+          left: `${CELL_SIZE * box.position.column}px`,
+        }"
+      />
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-  .robot {
-    background-image: url(/robot.png);
+  @mixin sprite($image) {
+    background-image: url($image);
     background-size: cover;
     transition: 0.3s all ease;
+  }
+
+  .box {
+    @include sprite("/box.png");
+  }
+
+  .robot {
+    @include sprite("/robot.png");
   }
 
   .robot-container {
