@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import Levels from '@/console/levels'
+import Levels, { Direction, nextLevel } from '@/console/levels'
 import useLevelPickerStore from '@/console/LevelPicker.store'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import FieldGrid from './FieldGrid.vue'
+import { useCodeRunnerStore } from '@/console/CodeRunner.store'
+
+const CELL_SIZE = 50
 
 const levelPickerStore = useLevelPickerStore()
 const { current: levelName } = storeToRefs(levelPickerStore)
@@ -12,6 +15,33 @@ const level = computed(() => {
     return name === levelName.value
   })
   return output!
+})
+
+const codeRunnerStore = useCodeRunnerStore()
+const { instructions, pointer } = storeToRefs(codeRunnerStore)
+
+const snapshots = computed(() => {
+  const output = [level.value]
+  let last = level.value
+  for (const instr of instructions.value) {
+    const next = nextLevel(last, instr)
+    output.push(next)
+    last = next
+  }
+  return output
+})
+
+const snapshot = computed(() => {
+  return snapshots.value[pointer.value]
+})
+
+const robotRotation = computed(() => {
+  switch (snapshot.value.robot.direction) {
+    case Direction.up: return 0
+    case Direction.right: return 90
+    case Direction.down: return 180
+    default: return 270
+  }
 })
 </script>
 
@@ -23,17 +53,34 @@ const level = computed(() => {
     />
     <div class="centered">
       <FieldGrid 
-        :cellSize="50"
+        :cellSize="CELL_SIZE"
         :rows="level.rows"
         :columns="level.columns"
         :walls="level.walls"
         :checkpoints="level.checkpoints"
+      />
+      <div
+        class="robot"
+        :style="{
+          width: `${CELL_SIZE}px`,
+          height: `${CELL_SIZE}px`,
+          position: 'absolute',
+          top: `${CELL_SIZE * snapshot.robot.position.row}px`,
+          left: `${CELL_SIZE * snapshot.robot.position.column}px`,
+          transform: `rotate(${robotRotation}deg)`,
+        }"
       />
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+  .robot {
+    background-image: url(/robot.png);
+    background-size: cover;
+    transition: 0.3s all ease;
+  }
+
   .robot-container {
     position: relative;
     width: 100%;
