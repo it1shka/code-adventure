@@ -17,6 +17,7 @@ const {
   setErrors,
   pointerNext,
   pointerPrev,
+  pointerSet,
   run,
   resume,
   stop,
@@ -112,6 +113,7 @@ const compileCode = () => {
       <p
         v-for="(instr, idx) in instructions"
         :class="{ 'code-instruction': true, running: idx === pointer }"
+        @click="pointerSet(idx)"
         v-text="instr"
       />
     </div>

@@ -1,6 +1,7 @@
 import type { Command } from '@/language/compiler'
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
+import { clamp } from '@/lib'
 
 const STEP_TIME = 500
 
@@ -37,6 +38,10 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
       pointer.value - 1,
       0
     )
+  }
+
+  const pointerSet = (newValue: number) => {
+    pointer.value = clamp(0, instructions.value.length, newValue)
   }
 
   const run = () => {
@@ -78,6 +83,7 @@ export const useCodeRunnerStore = defineStore('codeRunner', () => {
     setErrors,
     pointerNext,
     pointerPrev,
+    pointerSet,
     run,
     resume,
     stop,
