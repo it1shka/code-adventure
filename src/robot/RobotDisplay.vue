@@ -9,12 +9,17 @@ import { useCodeRunnerStore } from '@/console/CodeRunner.store'
 const CELL_SIZE = 50
 
 const levelPickerStore = useLevelPickerStore()
-const { current: levelName } = storeToRefs(levelPickerStore)
+const { current: levelName, completed } = storeToRefs(levelPickerStore)
+
 const level = computed(() => {
   const output = Levels.find(({ name }) => { 
     return name === levelName.value
   })
   return output!
+})
+
+const isCompleted = computed(() => {
+  return completed.value.includes(levelName.value)
 })
 
 const codeRunnerStore = useCodeRunnerStore()
@@ -46,18 +51,22 @@ const robotRotation = computed(() => {
 
 const { markAsCompleted } = levelPickerStore
 watch(snapshot, () => {
-  if (snapshot.value.completed && pointer.value >= snapshots.value.length - 1) {
-    markAsCompleted(levelName.value)
-  }
+  if (isCompleted.value) return
+  if (!snapshot.value.completed || pointer.value < snapshots.value.length - 1) return
+  markAsCompleted(levelName.value)
 })
 </script>
 
 <template>
   <div class="robot-container">
-    <div 
-      class="level-name"
-      v-text="levelName"
-    />
+    <div :class="{ 'level-name': true, completed: isCompleted }">
+      <p>{{ levelName }}</p>
+      <img 
+        v-if="isCompleted"
+        src="/check.png"
+        alt="Completed"
+      />
+    </div>
     <div class="centered">
       <FieldGrid 
         :cellSize="CELL_SIZE"
@@ -128,6 +137,19 @@ watch(snapshot, () => {
       padding: 0.5em;
       border-radius: 0 0 0 15px;
       box-shadow: #ffb74d 0px 1.5px 6px 0px, #ffb74d 0px 0px 0px 1px;
+      display: flex;
+      align-items: center;
+      img {
+        width: 15px;
+        height: auto;
+        transform: translateY(-2px);
+      }
+      &.completed {
+        box-shadow: #81c784 0px 1.5px 6px 0px, #81c784 0px 0px 0px 1px;
+      }
+      & > * + * {
+        margin-left: 0.25em;
+      }
     }
   }
 </style>
