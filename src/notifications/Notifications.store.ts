@@ -20,9 +20,9 @@ export type Notification = {
 }
 
 const StateDuration = Object.freeze({
-  [NotificationState.enter]: 200,
-  [NotificationState.active]: 750,
-  [NotificationState.leave]: 200,
+  [NotificationState.enter]: 100,
+  [NotificationState.active]: 2000,
+  [NotificationState.leave]: 1000,
 })
 
 const useNotificationsStore = defineStore('notifications', () => {

@@ -29,7 +29,7 @@ const { notification } = storeToRefs(notificationsStore)
           :alt="notification.content.variant" 
           :src="IconMapping[notification.content.variant ?? 'info']"
         />
-        <h2 v-text="notification.content.title" />
+        <h3 v-text="notification.content.title" />
       </div>
       <p
         v-if="notification.content.message"
@@ -42,7 +42,39 @@ const { notification } = storeToRefs(notificationsStore)
 <style scoped lang="scss">
   .notification {
     position: fixed;
-    top: 0;
     z-index: 1000;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 0.5em 1em;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    transition: 0.5s all ease;
+
+    div {
+      display: flex;
+      align-items: center;
+      & > * + * {
+        margin-left: 0.5em;
+      }
+      color: #212121;
+    }
+
+    img {
+      width: 30px;
+      height: auto;
+    }
+  }
+
+  .notification.enter {
+    top: -100%;
+  }
+
+  .notification.active {
+    top: 10px;
+  }
+
+  .notification.leave {
+    top: -100%;
+    opacity: 0;
   }
 </style>
