@@ -34,6 +34,9 @@ const getInitialState = () => {
     if (!assertStateType(state)) {
       return emptyState
     }
+    if (!Levels.find(({ name }) => name === state.current)) {
+      state.current = Levels[0].name
+    }
     return Object.freeze(state)
   } catch {
     return emptyState

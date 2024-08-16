@@ -53,10 +53,10 @@ const { notification } = storeToRefs(notificationsStore)
     div {
       display: flex;
       align-items: center;
+      color: #212121;
       & > * + * {
         margin-left: 0.5em;
       }
-      color: #212121;
     }
 
     img {
