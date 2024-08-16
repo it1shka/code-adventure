@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Editor from '@/editor/Editor.vue'
 import RightPane from '@/RightPane.vue'
+import Notifications from './notifications/Notifications.vue'
 import { ref } from 'vue'
 import { clamp } from '@/lib'
 
@@ -39,6 +40,7 @@ const handleDrag = (event: MouseEvent) => {
       <RightPane />
     </aside>
   </main>
+  <Notifications />
 </template>
 
 <style scoped lang="scss">

@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { computed, watch } from 'vue'
 import FieldGrid from './FieldGrid.vue'
 import { useCodeRunnerStore } from '@/console/CodeRunner.store'
+import useNotificationsStore from '@/notifications/Notifications.store'
 
 const CELL_SIZE = 50
 
@@ -49,10 +50,21 @@ const robotRotation = computed(() => {
   }
 })
 
+const { addNotification } = useNotificationsStore()
 const { markAsCompleted } = levelPickerStore
 watch(snapshot, () => {
-  if (isCompleted.value) return
   if (!snapshot.value.completed || pointer.value < snapshots.value.length - 1) return
+  if (!isCompleted.value) {
+    addNotification({
+      variant: 'success',
+      title: 'Level is completed',
+    })
+  } else {
+    addNotification({
+      variant: 'info',
+      title: 'You completed the level one more time!'
+    })
+  }
   markAsCompleted(levelName.value)
 })
 </script>

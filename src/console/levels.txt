@@ -24,7 +24,6 @@ Ride around
 %%
 
 Test level
-
 **********
 *        *
 *> O    X*
@@ -35,3 +34,11 @@ Test level
 *        *
 *        *
 **********
+
+%%
+
+Test level 5
+*****
+*VOX*
+*   *
+*****

@@ -39,3 +39,9 @@ export const all = <T>(array: T[], check: (elem: T) => boolean) => {
   }
   return true
 }
+
+export const sleep = (time: number) => {
+  return new Promise<void>(resolve => {
+    setTimeout(resolve, time)
+  })
+}
