@@ -68,13 +68,57 @@ export class Compiler {
         return this.compileRepeat(node)
       case NodeType.defineProcedure:
         return this.compileDefineProcedure(node)
+      case NodeType.callProcedure:
+        return this.compileCallProcedure(node)
       default:
         throw new Error(`Unsupported node type: ${nodeType}`)
     }
   }
 
   private compileDefineProcedure = (node: SyntaxNode) => {
+    const nameNode = node.getChild('ProcedureName')
+    if (nameNode === null) {
+      throw new Error('In procedure declaration: expected procedure name')
+    }
+
+    const nameValue = this.sourceCode.slice(
+      nameNode.from,
+      nameNode.to,
+    )
+
+    const bodyStart = node.getChild('as')
+    if (bodyStart === null) {
+      throw new Error('In procedure declaration: expected "as" keyword')
+    }
+    const cursor = bodyStart.cursor()
+    const procedureBody = []
+    while (cursor.nextSibling()) {
+      if (cursor.node.type.name === 'end') break
+      const compiled = this.compileNode(cursor.node)
+      procedureBody.push(...compiled)
+    }
+
+    this.procedures[nameValue] = procedureBody
+
     return []
+  }
+
+  private compileCallProcedure = (node: SyntaxNode) => {
+    const nameNode = node.getChild('ProcedureName')
+    if (nameNode === null) {
+      throw new Error('In procedure call: expected procedure name')
+    }
+
+    const nameValue = this.sourceCode.slice(
+      nameNode.from,
+      nameNode.to,
+    )
+
+    if (!(nameValue in this.procedures)) {
+      throw new Error(`In procedure call: undefined procedure "${nameValue}"`)
+    }
+
+    return this.procedures[nameValue]
   }
 
   private compileMove = (node: SyntaxNode) => {
@@ -118,7 +162,7 @@ export class Compiler {
     if (statementStart === null) {
       throw new Error('In repeat instruction: expected "times" keyword')
     }
-    let cursor = statementStart.cursor()
+    const cursor = statementStart.cursor()
     const commands = []
     while (cursor.nextSibling()) {
       if (cursor.node.type.name === 'end') break

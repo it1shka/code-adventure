@@ -12,7 +12,7 @@ Peter wants to scatter the boxes around the hangar
 to collect all the rubbish. To lend Peter a hand, 
 you'll write __a simple program__ to guide him. 
 Don't worry, though—it's easy! The programming 
-language Peter uses has just __three simple commands__.
+language Peter uses has just __five simple commands__.
 <br><br>
 Are you ready to help Peter turn his messy hangar 
 into a sparkling clean space? Let's get started 
@@ -21,7 +21,7 @@ and have a blast coding together!
 
 ## Instructions:
 
-There are currently __3 minimal instructions__
+There are currently __5 minimal instructions__
 implemented in the language:
 <br><br>
 
@@ -42,6 +42,18 @@ repeat ${n} times
   ${block}
 end
 ```
+
+4. **_Define_**: define custom procedure
+```instructions
+define ${body} as
+  ${body}
+end
+```
+
+5. **_Execute_**: execute custom procedure
+```
+execute ${procedure_name}
+```
 <br>
 
 Additionally, you can leave comments
@@ -54,10 +66,14 @@ in your code. Comments start with symbol __'#'__:
 
 Sample program to follow a square path:
 ```instructions
-repeat 4 times
-  move 5 steps
-  turn right
+define Square as
+  repeat 4 times
+    move 5 steps
+    turn right
+  end
 end
+
+execute Square
 ```
 <br>
 
