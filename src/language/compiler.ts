@@ -8,6 +8,14 @@ export const enum Command {
   turnLeft = 'turn-left',
 }
 
+const enum NodeType {
+  move = 'Move',
+  turn = 'Turn',
+  repeat = 'Repeat',
+  defineProcedure = 'DefineProcedure',
+  callProcedure = 'CallProcedure',
+}
+
 // TODO: create more useful reports
 export const checkErrors = (sourceCode: string) => {
   const errors: string[] = []
@@ -22,89 +30,100 @@ export const checkErrors = (sourceCode: string) => {
   return errors
 }
 
-/** 
- * If compilation fails, throws an error
- * @throws {Error}
- */
-export const compile = (sourceCode: string) => {
-  const ast = parser
-    .configure({ strict: true })
-    .parse(sourceCode)
-  const instructions = []
-  let cursor = ast.cursor()
-  if (!cursor.firstChild()) {
+export class Compiler {
+  private procedures: {[name: string]: Command[]} = {}
+
+  constructor (
+    private readonly sourceCode: string,
+  ) {}
+
+  /** 
+   * If compilation fails, throws an error
+   * @throws {Error}
+   */
+  compile = () => {
+    const ast = parser
+      .configure({ strict: true })
+      .parse(this.sourceCode)
+    const instructions = []
+    let cursor = ast.cursor()
+    if (!cursor.firstChild()) {
+      return []
+    }
+    do {
+      const compiledNode = this.compileNode(cursor.node)
+      instructions.push(...compiledNode)
+    } while (cursor.nextSibling())
+    return instructions
+  }
+
+  private compileNode = (node: SyntaxNode): Command[] => {
+    const nodeType = node.type.name
+    switch (nodeType) {
+      case NodeType.move: 
+        return this.compileMove(node)
+      case NodeType.turn: 
+        return this.compileTurn(node)
+      case NodeType.repeat: 
+        return this.compileRepeat(node)
+      case NodeType.defineProcedure:
+        return this.compileDefineProcedure(node)
+      default:
+        throw new Error(`Unsupported node type: ${nodeType}`)
+    }
+  }
+
+  private compileDefineProcedure = (node: SyntaxNode) => {
     return []
   }
-  do {
-    const compiledNode = compileNode(sourceCode, cursor.node)
-    instructions.push(...compiledNode)
-  } while (cursor.nextSibling())
-  return instructions
-}
 
-const enum NodeType {
-  move = 'Move',
-  turn = 'Turn',
-  repeat = 'Repeat',
-}
-
-/**
- * @throws {Error}
- */
-const compileNode = (source: string, node: SyntaxNode): Command[] => {
-  const nodeType = node.type.name
-  switch (nodeType) {
-    case NodeType.move: {
-      const n = node.getChild('Number')
-      if (n === null) {
-        throw new Error('In move instruction: expected the number of steps')
-      }
-      const stepsAmount = Number(source.slice(n.from, n.to))
-      if (Number.isNaN(stepsAmount)) {
-        throw new Error('In move instruction: steps is not a number')
-      }
-      return repeat(Command.move, stepsAmount)
+  private compileMove = (node: SyntaxNode) => {
+    const n = node.getChild('Number')
+    if (n === null) {
+      throw new Error('In move instruction: expected the number of steps')
     }
-
-    case NodeType.turn: {
-      const direction = node.getChild('Direction')
-      if (direction === null) {
-        throw new Error('In turn instruction: expected direction')
-      }
-      const span = source.slice(direction.from, direction.to)
-      switch (span) {
-        case 'left':
-          return [Command.turnLeft]
-        case 'right':
-          return [Command.turnRight]
-        default:
-          throw new Error('In turn instruction: unknown direction')
-      }
+    const stepsAmount = Number(this.sourceCode.slice(n.from, n.to))
+    if (Number.isNaN(stepsAmount)) {
+      throw new Error('In move instruction: steps is not a number')
     }
+    return repeat(Command.move, stepsAmount)
+  }
 
-    case NodeType.repeat: {
-      const n = node.getChild('Number')
-      if (n === null) {
-        throw new Error('In repeat instruction: expected the number of repetitions')
-      }
-      const times = Number(source.slice(n.from, n.to))
-      if (Number.isNaN(times)) {
-        throw new Error('In repeat instruction: repetitions is not a number')
-      }
-      const statementStart = node.getChild('times')
-      if (statementStart === null) {
-        throw new Error('In repeat instruction: expected "times" keyword')
-      }
-      let cursor = statementStart.cursor()
-      const commands = []
-      while (cursor.nextSibling()) {
-        if (cursor.node.type.name === 'end') break
-        commands.push(...compileNode(source, cursor.node))
-      }
-      return repeatArray(commands, times)
+  private compileTurn = (node: SyntaxNode) => {
+    const direction = node.getChild('Direction')
+    if (direction === null) {
+      throw new Error('In turn instruction: expected direction')
     }
+    const span = this.sourceCode.slice(direction.from, direction.to)
+    switch (span) {
+      case 'left':
+        return [Command.turnLeft]
+      case 'right':
+        return [Command.turnRight]
+      default:
+        throw new Error('In turn instruction: unknown direction')
+    }
+  }
 
-    default:
-      throw new Error(`Unknown node type: ${nodeType}`)
+  private compileRepeat = (node: SyntaxNode) => {
+    const n = node.getChild('Number')
+    if (n === null) {
+      throw new Error('In repeat instruction: expected the number of repetitions')
+    }
+    const times = Number(this.sourceCode.slice(n.from, n.to))
+    if (Number.isNaN(times)) {
+      throw new Error('In repeat instruction: repetitions is not a number')
+    }
+    const statementStart = node.getChild('times')
+    if (statementStart === null) {
+      throw new Error('In repeat instruction: expected "times" keyword')
+    }
+    let cursor = statementStart.cursor()
+    const commands = []
+    while (cursor.nextSibling()) {
+      if (cursor.node.type.name === 'end') break
+      commands.push(...this.compileNode(cursor.node))
+    }
+    return repeatArray(commands, times)
   }
 }
