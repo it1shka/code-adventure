@@ -7,13 +7,16 @@ import { linter, type Diagnostic } from '@codemirror/lint'
 const Keywords = Object.freeze([
   'move', 'steps',
   'turn', 'left', 'right',
-  'repeat', 'times', 'end'
+  'repeat', 'times', 'end',
+  'define', 'as', 'execute',
 ])
 
 const Snippets = Object.freeze({
   move: 'move ${n} steps',
   turn: 'turn ${direction}',
-  repeat: 'repeat ${n} times\n\t${instructions}\nend'
+  repeat: 'repeat ${n} times\n\t${instructions}\nend',
+  define: 'define ${procedure} as\n\t${instructions}\nend',
+  execute: 'execute ${procedure}',
 })
 
 const InstructionsLanguage = LRLanguage.define({
@@ -23,15 +26,16 @@ const InstructionsLanguage = LRLanguage.define({
         Number: tags.number,
         Direction: tags.atom,
         Comment: tags.comment,
+        ProcedureName: tags.typeName,
         [Keywords.join(' ')]: tags.keyword,
       }),
       indentNodeProp.add({
-        Repeat: context => {
+        'Repeat DefineProcedure': context => {
           return context.column(context.node.from) + context.unit
         },
       }),
       foldNodeProp.add({
-        Repeat: foldInside,
+        'Repeat DefineProcedure': foldInside,
       }),
     ],
   }),

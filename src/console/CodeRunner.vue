@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useCodeRunnerStore } from './CodeRunner.store'
-import { checkErrors, compile } from '@/language/compiler'
+import { checkErrors, Compiler } from '@/language/compiler'
 import { useEditorStore } from '@/editor/Editor.store'
 import { errorMessage } from '@/lib'
 
@@ -33,7 +33,8 @@ const compileCode = () => {
       setErrors(errors)
       return
     }
-    const instructions = compile(sourceCode.value)
+    const compiler = new Compiler(sourceCode.value)
+    const instructions = compiler.compile()
     setInstructions(instructions)
   } catch (error) {
     const message = errorMessage(error)
