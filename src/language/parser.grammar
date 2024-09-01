@@ -1,6 +1,6 @@
 @top Program { statement* }
 
-statement { Move | Turn | Repeat | DefineProcedure | CallProcedure }
+statement { Move | Turn | Repeat | DefineProcedure | CallProcedure | Backtracking }
 
 Move { "move" Number "steps" }
 
@@ -12,6 +12,8 @@ DefineProcedure { "define" ProcedureName "as" statement* "end" }
 
 CallProcedure { "execute" ProcedureName }
 
+Backtracking { "backtracking" statement* "end" }
+
 @tokens {
   Number { @digit+ }
   Direction { "left" | "right" }
@@ -22,6 +24,7 @@ CallProcedure { "execute" ProcedureName }
   "turn"
   "repeat" "times" "end"
   "define" "as" "execute"
+  "backtracking"
 }
 
 @skip { space | Comment }
