@@ -9,6 +9,7 @@ const Keywords = Object.freeze([
   'turn', 'left', 'right',
   'repeat', 'times', 'end',
   'define', 'as', 'execute',
+  'backtracking',
 ])
 
 const Snippets = Object.freeze({
@@ -17,7 +18,14 @@ const Snippets = Object.freeze({
   repeat: 'repeat ${n} times\n\t${instructions}\nend',
   define: 'define ${procedure} as\n\t${instructions}\nend',
   execute: 'execute ${procedure}',
+  backtracking: 'backtracking\n\t${instructions}\nend'
 })
+
+const BlockStatements = Object.freeze([
+  'Repeat',
+  'DefineProcedure',
+  'Backtracking',
+]).join(' ')
 
 const InstructionsLanguage = LRLanguage.define({
   parser: parser.configure({
@@ -30,12 +38,12 @@ const InstructionsLanguage = LRLanguage.define({
         [Keywords.join(' ')]: tags.keyword,
       }),
       indentNodeProp.add({
-        'Repeat DefineProcedure': context => {
+        [BlockStatements]: context => {
           return context.column(context.node.from) + context.unit
         },
       }),
       foldNodeProp.add({
-        'Repeat DefineProcedure': foldInside,
+        [BlockStatements]: foldInside,
       }),
     ],
   }),
