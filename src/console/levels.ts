@@ -129,6 +129,12 @@ export const nextLevel = (
 
   const moved = [nextRobotPosition, ...nextBoxes.map(({ position }) => position)]
   const collisionsExist = moved.some(({ row, column }) => {
+    if (row < 0 || row >= current.rows) {
+      return true
+    }
+    if (column < 0 || column >= current.columns) {
+      return true
+    }
     return current.walls.some(wall => {
       return wall.row === row && wall.column === column
     })
