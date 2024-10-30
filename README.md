@@ -96,8 +96,11 @@ execute Square
 <br>
 
 ## Project Status:
-This project is still under active development.
-New updates are coming soon! <br>
+The development is temporarily frozen
+since I don't have enough time for
+project enhancement. 
+There is a chance it will be resumed 
+in the future. <br>
 If you would like to support me financially,
 just let me know, maybe I will setup some sort
 of donation service for that purpose. <br>
